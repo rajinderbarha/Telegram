@@ -1,0 +1,66 @@
+import {
+  PropsWithChildren,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { supabase } from "../lib/supabase";
+import { Session, User } from "@supabase/supabase-js";
+
+type AuthContext = {
+  session: Session | null;
+  user: User | null;
+  profile : any | null;
+};
+
+export const AuthContext = createContext<AuthContext>({
+  session: null,
+  user: null,
+  profile : null
+});
+
+export default function AuthContextProvider({ children }: PropsWithChildren) {
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!session?.user) {
+      
+      return;
+    }
+
+    async function fetchProfile() {
+      let { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq('id', session?.user.id)
+        .single();
+        setProfile(data)
+    }
+
+    fetchProfile();
+  }, [session?.user]);
+
+  console.log(profile)
+
+  const value: AuthContext = {
+    session: session,
+    user: session?.user ?? null,
+    profile : profile
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export const useAuth = () => useContext(AuthContext);
