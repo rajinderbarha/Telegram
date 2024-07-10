@@ -11,53 +11,76 @@ import { Session, User } from "@supabase/supabase-js";
 type AuthContext = {
   session: Session | null;
   user: User | null;
-  profile : any | null;
+  profile: any | null;
+  loading: boolean;
 };
 
 export const AuthContext = createContext<AuthContext>({
   session: null,
   user: null,
-  profile : null
+  profile: null,
+  loading: true,
 });
 
 export default function AuthContextProvider({ children }: PropsWithChildren) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState();
+  const [session, setSession] = useState<any>(null);
+  const [profile, setProfile] = useState<any>();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const initAuth = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       setSession(session);
-    });
+      setLoading(false);
+    };
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+    initAuth();
+
+    const { data: authListner } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+        setLoading(false);
+      }
+    );
+
+    return () => {
+      authListner.subscription.unsubscribe();
+    };
+
+    // supabase.auth.onAuthStateChange((_event, session) => {
+    //   setSession(session);
+    // });
   }, []);
 
   useEffect(() => {
-    if (!session?.user) {
-      
-      return;
-    }
+    
 
+    if(session && session.user){
     async function fetchProfile() {
       let { data, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq('id', session?.user.id)
+        .eq("id", session.user.id)
         .single();
-        setProfile(data)
+      setProfile(data);
     }
 
     fetchProfile();
+  }else {
+    setProfile(null)
+  }
+
   }, [session?.user]);
 
-  console.log(profile)
+  console.log(profile);
 
   const value: AuthContext = {
-    session: session,
+    session,
     user: session?.user ?? null,
-    profile : profile
+    profile,
+    loading
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

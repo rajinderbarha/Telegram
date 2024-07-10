@@ -1,16 +1,9 @@
-import { Link, router, useNavigation } from "expo-router";
-import React, { useState } from "react";
-import {
-  Channel,
-  ChannelList,
-  MessageInput,
-  MessageList,
-  
-} from "stream-chat-expo";
+import { router } from "expo-router";
+import { useState } from "react";
+import { ChannelList } from "stream-chat-expo";
 import { useAuth } from "../../provider/authProvider";
 
 export default function MainChatScreen() {
-  const [channel, setChannel] = useState();
   const { user } = useAuth();
 
   function channelNavigation(cid: any) {
@@ -19,7 +12,7 @@ export default function MainChatScreen() {
 
   return (
     <ChannelList
-      filters={{ members: { $in: [user?.id || ''] } }}
+      filters={{ members: { $in: [user?.id || ""] } }}
       onSelect={(channel) => channelNavigation(channel.cid)}
     />
   );

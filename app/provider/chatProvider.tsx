@@ -5,6 +5,7 @@ import { Chat, OverlayProvider } from "stream-chat-expo";
 import { ActivityIndicator } from "react-native";
 import { useAuth } from "./authProvider";
 import { supabase } from "../lib/supabase";
+import tokenProvider from "../utility/tokenProider";
 
 const apiKey = process.env.EXPO_PUBLIC_STREAM_API_KEY;
 
@@ -15,54 +16,44 @@ if (!apiKey) {
 const client = StreamChat.getInstance(apiKey);
 export default function ChatProvider({ children }: PropsWithChildren) {
   const [isReady, setIsReady] = useState(false);
-  const { profile } = useAuth();
+  const { profile, loading } = useAuth();
 
   useEffect(() => {
-    if (!profile) {
+    if (loading) {
       return;
     }
+    tokenProvider().then(console.log);
 
     async function connectUser() {
-      // Updated function definition
-      try {
-        await client.connectUser(
-          {
-            id: profile.id,
-            name: profile.full_name,
-            image: supabase.storage
-              .from("avatars")
-              .getPublicUrl(profile.avatar_url).data.publicUrl,
-          },
-          client.devToken(profile.id)
-        );
-        setIsReady(true);
-      } catch (error) {
-        console.error("Error connecting user:", error);
-        setIsReady(true)
+      if (!profile) {
+        return;
       }
+      await client.connectUser(
+        {
+          id: profile.id,
+          name: profile.full_name,
+          image: supabase.storage
+            .from("avatars")
+            .getPublicUrl(profile.avatar_url).data.publicUrl,
+        },
+        tokenProvider
+      );
+      setIsReady(true);
+    };
 
-      // const channel = client.channel('messaging', 'the_park', {
-      //   name: 'The Park',
+    connectUser();
 
-      // });
-
-      // await channel.watch()
-    }
-
-    if (!isReady) {
-      connectUser();
-    }
     return () => {
-      if (isReady) {
+      if (client.userID) {
         client.disconnectUser();
       }
       setIsReady(false);
     };
-  }, [profile?.id]);
+  }, [profile, loading]);
 
-  // if (!isReady) {
-  //   return <ActivityIndicator />;
-  // }
+  if (!isReady) {
+    return <ActivityIndicator />;
+  } 
 
   return (
     <OverlayProvider>
@@ -70,3 +61,5 @@ export default function ChatProvider({ children }: PropsWithChildren) {
     </OverlayProvider>
   );
 }
+
+
