@@ -74,7 +74,7 @@ export default function AuthContextProvider({ children }: PropsWithChildren) {
 
   }, [session?.user]);
 
-  console.log(profile);
+  // console.log(profile);
 
   const value: AuthContext = {
     session,

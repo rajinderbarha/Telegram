@@ -22,7 +22,8 @@ export default function ChatProvider({ children }: PropsWithChildren) {
     if (loading) {
       return;
     }
-    tokenProvider().then(console.log);
+    tokenProvider()
+    // .then(console.log);
 
     async function connectUser() {
       if (!profile) {

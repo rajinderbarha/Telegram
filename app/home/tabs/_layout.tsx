@@ -1,6 +1,7 @@
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { Link, Tabs } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { View } from "react-native";
 
 export default function TabLayout() {
   return (
@@ -13,9 +14,13 @@ export default function TabLayout() {
             <Entypo name="chat" size={size} color={color} />
           ),
           headerRight: () => (
-            <Link href={'/home/users'}>
-            <FontAwesome5 name="users" size={24} color="black" style={{marginHorizontal : 15}} />
-            </Link>
+            <View style={{ flexDirection: "row", paddingHorizontal: 10 }}>
+              
+
+              <Link href={"/home/users"}>
+                <FontAwesome5 name="users" size={24} color="black" />
+              </Link>
+            </View>
           ),
         }}
       />
