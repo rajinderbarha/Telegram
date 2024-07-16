@@ -35,7 +35,7 @@ export default function VideoProvider({ children }: PropsWithChildren) {
         }
     }
     
-  }, [profile?.id]);
+  }, [profile]);
 
   if (!videoClient) {
     return (

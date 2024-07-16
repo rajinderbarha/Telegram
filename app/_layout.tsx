@@ -27,7 +27,7 @@ export default function RootLayout  ()  {
       <AuthContextProvider>
     <Stack initialRouteName='home'>
       <Stack.Screen name='home' options={{headerShown : false}} />
-      <Stack.Screen name='auth' />
+      <Stack.Screen name='auth' options={{ title : 'Sign In' }}/>
     </Stack>
     </AuthContextProvider>
     </GestureHandlerRootView>

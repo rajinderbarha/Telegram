@@ -49,9 +49,6 @@ export default function AuthContextProvider({ children }: PropsWithChildren) {
       authListner.subscription.unsubscribe();
     };
 
-    // supabase.auth.onAuthStateChange((_event, session) => {
-    //   setSession(session);
-    // });
   }, []);
 
   useEffect(() => {
@@ -74,7 +71,6 @@ export default function AuthContextProvider({ children }: PropsWithChildren) {
 
   }, [session?.user]);
 
-  // console.log(profile);
 
   const value: AuthContext = {
     session,

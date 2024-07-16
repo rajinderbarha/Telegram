@@ -1,7 +1,7 @@
 import { useCalls } from "@stream-io/video-react-native-sdk";
 import { router, useSegments } from "expo-router";
 import { PropsWithChildren, useEffect } from "react";
-import { Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function CallProvider({ children }: PropsWithChildren) {
@@ -11,23 +11,11 @@ export default function CallProvider({ children }: PropsWithChildren) {
   const segments = useSegments();
   const isOnCallScreen = segments[1] === "call";
 
-
-  // function goToCall() {
-  //   if (call) {
-  //     router.push(`/home/call`);
-  //   }
-  // }
-
   useEffect(() => {
-    if (!call) {
-      return;
-    }
-    if (!isOnCallScreen && call.state.callingState === 'ringing') {
+    if (call && !isOnCallScreen && call.state.callingState === "ringing") {
       router.push(`/home/call`);
     }
   }, [call, isOnCallScreen]);
-
-
 
   return (
     <>
@@ -36,8 +24,8 @@ export default function CallProvider({ children }: PropsWithChildren) {
         <Pressable
           onPress={() => router.push(`/home/call`)}
           style={{
-            position: 'absolute',
-            backgroundColor: 'lightgreen',
+            position: "absolute",
+            backgroundColor: "lightgreen",
             top: top + 40,
             left: 0,
             right: 0,
@@ -52,41 +40,3 @@ export default function CallProvider({ children }: PropsWithChildren) {
     </>
   );
 }
-
-
-//   if (call && !isOnCallScreen) {
-//     return (
-//       <>
-//         <Pressable
-//           style={({ pressed }) => [
-//             styles.call,
-//             pressed && styles.pressed,
-//             { top: top + 20 },
-//           ]}
-//           onPress={() => goToCall()}
-//         >
-//           <Text>Call: {call.id} ({call.state.callingState})</Text>
-//         </Pressable>
-
-//         {children}
-//       </>
-//     );
-//   } else {
-//     return <>{children}</>;
-//   }
-// }
-
-// const styles = StyleSheet.create({
-//   call: {
-//     backgroundColor: "green",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     height: 32,
-//     zIndex: 1,
-//   },
-//   pressed: {
-//     opacity: 0.5,
-//   },
-// });
-
-

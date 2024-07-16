@@ -1,8 +1,7 @@
-import { PropsWithChildren } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState,PropsWithChildren } from "react";
 import { StreamChat } from "stream-chat";
 import { Chat, OverlayProvider } from "stream-chat-expo";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator , View, Text} from "react-native";
 import { useAuth } from "./authProvider";
 import { supabase } from "../lib/supabase";
 import tokenProvider from "../utility/tokenProider";
@@ -23,12 +22,12 @@ export default function ChatProvider({ children }: PropsWithChildren) {
       return;
     }
     tokenProvider()
-    // .then(console.log);
 
     async function connectUser() {
       if (!profile) {
         return;
       }
+      try{
       await client.connectUser(
         {
           id: profile.id,
@@ -40,6 +39,9 @@ export default function ChatProvider({ children }: PropsWithChildren) {
         tokenProvider
       );
       setIsReady(true);
+    } catch(error){
+      console.error("Error connecting user (chat Provider):", error);
+    } 
     };
 
     connectUser();
@@ -53,7 +55,12 @@ export default function ChatProvider({ children }: PropsWithChildren) {
   }, [profile, loading]);
 
   if (!isReady) {
-    return <ActivityIndicator />;
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator />
+        <Text>Loading Chat Provider</Text>
+      </View>
+    );
   } 
 
   return (

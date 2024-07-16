@@ -1,9 +1,18 @@
-import React from 'react';
-import { Redirect } from 'expo-router';
+import React from "react";
+import { Redirect } from "expo-router";
 
-export default function Index  (){
+
+
+
+
+
+
+
+export default function Index() {
+
+  
   return <Redirect href="/auth" />;
-};
+}
 
 // import { useState, useEffect } from 'react'
 // import { supabase } from './lib/supabase'
@@ -14,7 +23,6 @@ export default function Index  (){
 // import { Redirect } from 'expo-router'
 
 // export default function App() {
- 
 
 //   return (
 //     <View>
@@ -22,8 +30,5 @@ export default function Index  (){
 //     </View>
 //   )
 // }
-
-
-
 
 // // {/* <Account key={session.user.id} session={session} /> : <Auth /> */}
