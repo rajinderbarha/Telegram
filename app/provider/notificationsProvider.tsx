@@ -13,7 +13,7 @@ const client = StreamChat.getInstance(apiKey);
 
 export default function NotificationsProvider({ children }: PropsWithChildren) {
   const [isReady, setIsReady] = useState(false);
-    const {user}: any = useAuth();
+  const { user }: any = useAuth();
   const requestPermission = async () => {
     const authStatus = await messaging().requestPermission();
     const enabled =
@@ -26,19 +26,17 @@ export default function NotificationsProvider({ children }: PropsWithChildren) {
   };
 
   useEffect(() => {
-    
     const registerPushToken = async () => {
-      // unsubscribe any previous listener
       const token = await messaging().getToken();
       const push_provider = "firebase";
       const push_provider_name = "Firebase";
-        client.addDevice(token, push_provider, user.id, push_provider_name)
+      // client.addDevice(token, push_provider, user.id, push_provider_name);
 
-    //   client.setLocalDevice({
-    //     id: token,
-    //     push_provider,
-    //     push_provider_name,
-    //   });
+        client.setLocalDevice({
+          id: token,
+          push_provider,
+          push_provider_name,
+        });
     };
     const init = async () => {
       await requestPermission();
@@ -50,8 +48,7 @@ export default function NotificationsProvider({ children }: PropsWithChildren) {
     init();
   }, []);
 
-
-  if(!isReady){
+  if (!isReady) {
     return null;
   }
 
